@@ -1,3 +1,5 @@
+"use client";
+
 import LoadingButton from "@/components/LoadingButton";
 import { useToast } from "@/hooks/use-toast";
 import usePremiumModal from "@/hooks/usePremiumModal";
@@ -7,6 +9,7 @@ import { WandSparklesIcon } from "lucide-react";
 import { useState } from "react";
 import { useSubscriptionLevel } from "../../SubscriptionLevelProvider";
 import { generateSummary } from "./actions";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 interface GenerateSummaryButtonProps {
   resumeData: ResumeValues;
@@ -18,11 +21,9 @@ export default function GenerateSummaryButton({
   onSummaryGenerated,
 }: GenerateSummaryButtonProps) {
   const subscriptionLevel = useSubscriptionLevel();
-
   const premiumModal = usePremiumModal();
-
   const { toast } = useToast();
-
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
 
   async function handleClick() {
@@ -54,7 +55,7 @@ export default function GenerateSummaryButton({
       loading={loading}
     >
       <WandSparklesIcon className="size-4" />
-      Generate (AI)
+      {t("editor.forms.summary.generateButton")}
     </LoadingButton>
   );
 }

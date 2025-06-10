@@ -36,11 +36,13 @@ import { GripHorizontal } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useForm, UseFormReturn } from "react-hook-form";
 import GenerateWorkExperienceButton from "./GenerateWorkExperienceButton";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 export default function WorkExperienceForm({
   resumeData,
   setResumeData,
 }: EditorFormProps) {
+  const { t } = useLanguage();
   const form = useForm<WorkExperienceValues>({
     resolver: zodResolver(workExperienceSchema),
     defaultValues: {
@@ -87,9 +89,9 @@ export default function WorkExperienceForm({
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">Work experience</h2>
+        <h2 className="text-2xl font-semibold">{t("editor.forms.workExperience.title")}</h2>
         <p className="text-sm text-muted-foreground">
-          Add as many work experiences as you like.
+          {t("editor.forms.workExperience.addManyHelp")}
         </p>
       </div>
       <Form {...form}>
@@ -128,7 +130,7 @@ export default function WorkExperienceForm({
                 })
               }
             >
-              Add work experience
+              {t("editor.forms.workExperience.addExperience")}
             </Button>
           </div>
         </form>
@@ -150,6 +152,7 @@ function WorkExperienceItem({
   index,
   remove,
 }: WorkExperienceItemProps) {
+  const { t } = useLanguage();
   const {
     attributes,
     listeners,
@@ -172,7 +175,7 @@ function WorkExperienceItem({
       }}
     >
       <div className="flex justify-between gap-2">
-        <span className="font-semibold">Work experience {index + 1}</span>
+        <span className="font-semibold">{t("editor.forms.workExperience.workExperienceNumber")} {index + 1}</span>
         <GripHorizontal
           className="size-5 cursor-grab text-muted-foreground focus:outline-none"
           {...attributes}
@@ -191,7 +194,7 @@ function WorkExperienceItem({
         name={`workExperiences.${index}.position`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Job title</FormLabel>
+            <FormLabel>{t("editor.forms.workExperience.jobTitle")}</FormLabel>
             <FormControl>
               <Input {...field} autoFocus />
             </FormControl>
@@ -204,7 +207,7 @@ function WorkExperienceItem({
         name={`workExperiences.${index}.company`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Company</FormLabel>
+            <FormLabel>{t("editor.forms.workExperience.company")}</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -218,12 +221,12 @@ function WorkExperienceItem({
           name={`workExperiences.${index}.startDate`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Start date</FormLabel>
+              <FormLabel>{t("editor.forms.workExperience.startDate")}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   type="date"
-                  value={field.value?.slice(0, 10)}
+                  value={field.value || ""}
                 />
               </FormControl>
               <FormMessage />
@@ -235,12 +238,12 @@ function WorkExperienceItem({
           name={`workExperiences.${index}.endDate`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>End date</FormLabel>
+              <FormLabel>{t("editor.forms.workExperience.endDate")}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   type="date"
-                  value={field.value?.slice(0, 10)}
+                  value={field.value || ""}
                 />
               </FormControl>
               <FormMessage />
@@ -249,15 +252,14 @@ function WorkExperienceItem({
         />
       </div>
       <FormDescription>
-        Leave <span className="font-semibold">end date</span> empty if you are
-        currently working here.
+        {t("editor.forms.workExperience.endDateHelp")}
       </FormDescription>
       <FormField
         control={form.control}
         name={`workExperiences.${index}.description`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Description</FormLabel>
+            <FormLabel>{t("editor.forms.workExperience.description")}</FormLabel>
             <FormControl>
               <Textarea {...field} />
             </FormControl>
@@ -266,7 +268,7 @@ function WorkExperienceItem({
         )}
       />
       <Button variant="destructive" type="button" onClick={() => remove(index)}>
-        Remove
+        {t("editor.forms.workExperience.remove")}
       </Button>
     </div>
   );

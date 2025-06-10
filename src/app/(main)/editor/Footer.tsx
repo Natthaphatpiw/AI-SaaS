@@ -1,8 +1,11 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { FileUserIcon, PenLineIcon } from "lucide-react";
 import Link from "next/link";
 import { steps } from "./steps";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 interface FooterProps {
   currentStep: string;
@@ -19,6 +22,8 @@ export default function Footer({
   setShowSmResumePreview,
   isSaving,
 }: FooterProps) {
+  const { t } = useLanguage();
+
   const previousStep = steps.find(
     (_, index) => steps[index + 1]?.key === currentStep,
   )?.key;
@@ -38,13 +43,13 @@ export default function Footer({
             }
             disabled={!previousStep}
           >
-            Previous step
+            {t("editor.footer.previous")}
           </Button>
           <Button
             onClick={nextStep ? () => setCurrentStep(nextStep) : undefined}
             disabled={!nextStep}
           >
-            Next step
+            {t("editor.footer.next")}
           </Button>
         </div>
         <Button
@@ -53,14 +58,14 @@ export default function Footer({
           onClick={() => setShowSmResumePreview(!showSmResumePreview)}
           className="md:hidden"
           title={
-            showSmResumePreview ? "Show input form" : "Show resume preview"
+            showSmResumePreview ? "Show input form" : t("editor.footer.preview") as string
           }
         >
           {showSmResumePreview ? <PenLineIcon /> : <FileUserIcon />}
         </Button>
         <div className="flex items-center gap-3">
           <Button variant="secondary" asChild>
-            <Link href="/resumes">Close</Link>
+            <Link href="/resumes">{t("editor.footer.close")}</Link>
           </Button>
           <p
             className={cn(

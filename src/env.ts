@@ -3,6 +3,13 @@ import { z } from "zod";
 
 export const env = createEnv({
   server: {
+    DATABASE_URL: z.string().min(1),
+    DATABASE_URL_UNPOOLED: z.string().min(1),
+    PGHOST: z.string().min(1),
+    PGHOST_UNPOOLED: z.string().min(1),
+    PGUSER: z.string().min(1),
+    PGPASSWORD: z.string().min(1),
+    PGDATABASE: z.string().min(1),
     POSTGRES_URL: z.string().min(1),
     POSTGRES_PRISMA_URL: z.string().min(1),
     POSTGRES_URL_NO_SSL: z.string().min(1),
@@ -16,6 +23,7 @@ export const env = createEnv({
     OPENAI_API_KEY: z.string().min(1),
     STRIPE_SECRET_KEY: z.string().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
+    AZURE_OPENAI_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string().min(1),
@@ -24,6 +32,7 @@ export const env = createEnv({
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1),
     NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY: z.string().min(1),
     NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY: z.string().min(1),
+    NEXT_PUBLIC_STRIPE_PRICE_ID_ONE_TIME: z.string().min(1),
     NEXT_PUBLIC_BASE_URL: z.string().min(1).url(),
   },
   experimental__runtimeEnv: {
@@ -37,6 +46,9 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY,
     NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY:
       process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_PLUS_MONTHLY,
+    NEXT_PUBLIC_STRIPE_PRICE_ID_ONE_TIME:
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_ONE_TIME,
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+    // NEXT_PUBLIC_PROMPTPAY_ID: process.env.NEXT_PUBLIC_PROMPTPAY_ID,
   },
 });

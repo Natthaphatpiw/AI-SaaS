@@ -15,9 +15,13 @@ export async function createCheckoutSession(priceId: string) {
     | string
     | undefined;
 
+  // Get price details to determine if it's a subscription
+  const price = await stripe.prices.retrieve(priceId);
+  const isSubscription = price.type === 'recurring';
+
   const session = await stripe.checkout.sessions.create({
     line_items: [{ price: priceId, quantity: 1 }],
-    mode: "subscription",
+    mode: isSubscription ? "subscription" : "payment",
     success_url: `${env.NEXT_PUBLIC_BASE_URL}/billing/success`,
     cancel_url: `${env.NEXT_PUBLIC_BASE_URL}/billing`,
     customer: stripeCustomerId,
@@ -27,11 +31,13 @@ export async function createCheckoutSession(priceId: string) {
     metadata: {
       userId: user.id,
     },
-    subscription_data: {
-      metadata: {
-        userId: user.id,
+    ...(isSubscription ? {
+      subscription_data: {
+        metadata: {
+          userId: user.id,
+        },
       },
-    },
+    } : {}),
     custom_text: {
       terms_of_service_acceptance: {
         message: `I have read AI Resume Builder's [terms of service](${env.NEXT_PUBLIC_BASE_URL}/tos) and agree to them.`,
@@ -40,6 +46,8 @@ export async function createCheckoutSession(priceId: string) {
     consent_collection: {
       terms_of_service: "required",
     },
+    payment_method_types: isSubscription ? ["card"] : ["card", "promptpay"],
+    currency: "thb",
   });
 
   if (!session.url) {

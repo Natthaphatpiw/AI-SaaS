@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { ResumeValues } from "@/lib/validation";
 import BorderStyleButton from "./BorderStyleButton";
 import ColorPicker from "./ColorPicker";
+import FontSizeSelector from "./FontSizeSelector";
 
 interface ResumePreviewSectionProps {
   resumeData: ResumeValues;
@@ -30,6 +31,12 @@ export default function ResumePreviewSection({
           borderStyle={resumeData.borderStyle}
           onChange={(borderStyle) =>
             setResumeData({ ...resumeData, borderStyle })
+          }
+        />
+        <FontSizeSelector
+          fontSize={resumeData.fontSize}
+          onChange={(fontSize: string) =>
+            setResumeData({ ...resumeData, fontSize })
           }
         />
       </div>

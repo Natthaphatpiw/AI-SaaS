@@ -1,11 +1,11 @@
+// /src/app/(main)/billing/page.tsx
+
 import prisma from "@/lib/prisma";
 import stripe from "@/lib/stripe";
+import { getUserSubscriptionLevel } from "@/lib/subscription"; // NEW
 import { auth } from "@clerk/nextjs/server";
-import { formatDate } from "date-fns";
 import { Metadata } from "next";
-import Stripe from "stripe";
-import GetSubscriptionButton from "./GetSubscriptionButton";
-import ManageSubscriptionButton from "./ManageSubscriptionButton";
+import BillingContent from "./BillingContent";
 
 export const metadata: Metadata = {
   title: "Billing",
@@ -17,39 +17,41 @@ export default async function Page() {
   if (!userId) {
     return null;
   }
+  
+  // NEW: ใช้ function กลางในการหา subscription level
+  const subscriptionLevel = await getUserSubscriptionLevel(userId);
 
   const subscription = await prisma.userSubscription.findUnique({
     where: { userId },
   });
 
-  const priceInfo = subscription
-    ? await stripe.prices.retrieve(subscription.stripePriceId, {
-        expand: ["product"],
-      })
+  let priceInfo = null;
+
+  if (subscription?.stripePriceId) {
+    try {
+      const rawPriceInfo = await stripe.prices.retrieve(
+        subscription.stripePriceId,
+        {
+          expand: ["product"],
+        },
+      );
+      priceInfo = JSON.parse(JSON.stringify(rawPriceInfo));
+    } catch (error) {
+        console.error("Failed to retrieve price info:", error);
+        // ไม่ต้อง throw error ปล่อยให้ priceInfo เป็น null
+    }
+  }
+
+  // ✅ subscription ควร serialize เช่นกัน
+  const plainSubscription = subscription
+    ? JSON.parse(JSON.stringify(subscription))
     : null;
 
   return (
-    <main className="mx-auto w-full max-w-7xl space-y-6 px-3 py-6">
-      <h1 className="text-3xl font-bold">Billing</h1>
-      <p>
-        Your current plan:{" "}
-        <span className="font-bold">
-          {priceInfo ? (priceInfo.product as Stripe.Product).name : "Free"}
-        </span>
-      </p>
-      {subscription ? (
-        <>
-          {subscription.stripeCancelAtPeriodEnd && (
-            <p className="text-destructive">
-              Your subscription will be canceled on{" "}
-              {formatDate(subscription.stripeCurrentPeriodEnd, "MMMM dd, yyyy")}
-            </p>
-          )}
-          <ManageSubscriptionButton />
-        </>
-      ) : (
-        <GetSubscriptionButton />
-      )}
-    </main>
+    <BillingContent
+      subscription={plainSubscription}
+      priceInfo={priceInfo}
+      subscriptionLevel={subscriptionLevel} // NEW: ส่ง level ไปด้วย
+    />
   );
 }

@@ -29,9 +29,15 @@ export async function generateSummary(input: GenerateSummaryInput) {
     generateSummarySchema.parse(input);
 
   const systemMessage = `
-    You are a job resume generator AI. Your task is to write a professional introduction summary for a resume given the user's provided data.
-    Only return the summary and do not include any other information in the response. Keep it concise and professional.
+    You are an expert AI resume writer. Your task is to write a compelling, professional, and concise introduction summary for a resume based on the provided user data.
+    - Write in third person (no "I" or "my").
+    - Summarize key skills, experience, and education relevant to the job title.
+    - Focus on strengths, unique value, and achievements.
+    - Do not include greetings, labels, or any information not directly supported by the data.
+    - Length: 1-2 sentences.
+    - Output only the summary, nothing else.
     `;
+    
 
   const userMessage = `
     Please generate a professional resume summary from this data:
@@ -67,7 +73,7 @@ export async function generateSummary(input: GenerateSummaryInput) {
   console.log("userMessage", userMessage);
 
   const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4.1",
     messages: [
       {
         role: "system",
@@ -107,23 +113,41 @@ export async function generateWorkExperience(
   const { description } = generateWorkExperienceSchema.parse(input);
 
   const systemMessage = `
-  You are a job resume generator AI. Your task is to generate a single work experience entry based on the user input.
-  Your response must adhere to the following structure. You can omit fields if they can't be inferred from the provided data, but don't add any new ones.
+You are an AI resume generator and expert in MIT CAPD resume writing standards.
 
-  Job title: <job title>
-  Company: <company name>
-  Start date: <format: YYYY-MM-DD> (only if provided)
-  End date: <format: YYYY-MM-DD> (only if provided)
-  Description: <an optimized description in bullet format, might be inferred from the job title>
-  `;
+Your task is to generate a single work experience entry in professional English based on the user's input paragraph, which may be written in Thai or English.
+
+Format your response exactly as below (omit any field not provided):
+Job title: <job title>
+Company: <company name>
+Start date: <YYYY-MM-DD> (only if clearly provided)
+End date: <YYYY-MM-DD> (only if clearly provided)
+Description:
+- <bullet point 1>
+- <bullet point 2>
+- <bullet point 3>
+...
+
+Guidelines:
+- Only include information that is directly inferable from the input. Do not invent or assume missing details.
+- Each bullet must begin with a strong past-tense action verb (e.g., Led, Built, Designed, Increased).
+- Bullets must be concise and focus on impact or responsibility.
+- Include quantifiable achievements wherever possible.
+- Do not include greetings, explanations, or anything outside the format.
+- Final output must be in English, regardless of the language used in the input.
+- The tone must be professional and resume-appropriate, following the MIT CAPD resume examples.
+`;
 
   const userMessage = `
-  Please provide a work experience entry from this description:
-  ${description}
-  `;
+Please generate a professional resume work experience entry from the following input paragraph. This input may be in Thai or English:
+
+"""
+${description}
+"""
+`;
 
   const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4.1",
     messages: [
       {
         role: "system",

@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { EditorFormProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { educationSchema, EducationValues } from "@/lib/validation";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 import {
   closestCenter,
   DndContext,
@@ -38,6 +39,7 @@ export default function EducationForm({
   resumeData,
   setResumeData,
 }: EditorFormProps) {
+  const { t } = useLanguage();
   const form = useForm<EducationValues>({
     resolver: zodResolver(educationSchema),
     defaultValues: {
@@ -83,9 +85,9 @@ export default function EducationForm({
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">Education</h2>
+        <h2 className="text-2xl font-semibold">{t("editor.forms.education.title")}</h2>
         <p className="text-sm text-muted-foreground">
-          Add as many educations as you like.
+          {t("editor.forms.education.addManyHelp")}
         </p>
       </div>
       <Form {...form}>
@@ -123,7 +125,7 @@ export default function EducationForm({
                 })
               }
             >
-              Add education
+              {t("editor.forms.education.addEducation")}
             </Button>
           </div>
         </form>
@@ -140,6 +142,7 @@ interface EducationItemProps {
 }
 
 function EducationItem({ id, form, index, remove }: EducationItemProps) {
+  const { t } = useLanguage();
   const {
     attributes,
     listeners,
@@ -162,7 +165,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
       }}
     >
       <div className="flex justify-between gap-2">
-        <span className="font-semibold">Education {index + 1}</span>
+        <span className="font-semibold">{t("editor.forms.education.educationNumber")} {index + 1}</span>
         <GripHorizontal
           className="size-5 cursor-grab text-muted-foreground focus:outline-none"
           {...attributes}
@@ -174,7 +177,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
         name={`educations.${index}.degree`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Degree</FormLabel>
+            <FormLabel>{t("editor.forms.education.degree")}</FormLabel>
             <FormControl>
               <Input {...field} autoFocus />
             </FormControl>
@@ -187,7 +190,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
         name={`educations.${index}.school`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>School</FormLabel>
+            <FormLabel>{t("editor.forms.education.school")}</FormLabel>
             <FormControl>
               <Input {...field} />
             </FormControl>
@@ -201,7 +204,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
           name={`educations.${index}.startDate`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Start date</FormLabel>
+              <FormLabel>{t("editor.forms.education.startDate")}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -218,7 +221,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
           name={`educations.${index}.endDate`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>End date</FormLabel>
+              <FormLabel>{t("editor.forms.education.endDate")}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
@@ -232,7 +235,7 @@ function EducationItem({ id, form, index, remove }: EducationItemProps) {
         />
       </div>
       <Button variant="destructive" type="button" onClick={() => remove(index)}>
-        Remove
+        {t("editor.forms.education.remove")}
       </Button>
     </div>
   );

@@ -13,6 +13,27 @@ interface ResumePreviewProps {
   className?: string;
 }
 
+// Font size calculation function
+function getFontSizeStyles(fontSize?: string) {
+  const baseFontSize = fontSize ? parseInt(fontSize) : 12;
+  
+  return {
+    headerName: { fontSize: `${Math.max(baseFontSize + 8, 16)}px` },
+    headerJob: { fontSize: `${baseFontSize + 2}px` },
+    sectionTitle: { fontSize: `${baseFontSize + 4}px` },
+    workPosition: { fontSize: `${baseFontSize}px` },
+    workDate: { fontSize: `${baseFontSize}px` },
+    workCompany: { fontSize: `${Math.max(baseFontSize - 1, 9)}px` },
+    workDescription: { fontSize: `${Math.max(baseFontSize - 1, 9)}px` },
+    educationDegree: { fontSize: `${baseFontSize}px` },
+    educationDate: { fontSize: `${baseFontSize}px` },
+    educationSchool: { fontSize: `${Math.max(baseFontSize - 1, 9)}px` },
+    summary: { fontSize: `${baseFontSize}px` },
+    contact: { fontSize: `${Math.max(baseFontSize - 1, 9)}px` },
+    skills: { fontSize: `${Math.max(baseFontSize - 1, 9)}px` },
+  };
+}
+
 export default function ResumePreview({
   resumeData,
   contentRef,
@@ -64,8 +85,10 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
     email,
     colorHex,
     borderStyle,
+    fontSize,
   } = resumeData;
 
+  const fontStyles = getFontSizeStyles(fontSize);
   const [photoSrc, setPhotoSrc] = useState(photo instanceof File ? "" : photo);
 
   useEffect(() => {
@@ -97,23 +120,24 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
       <div className="space-y-2.5">
         <div className="space-y-1">
           <p
-            className="text-3xl font-bold"
+            className="font-bold"
             style={{
               color: colorHex,
+              ...fontStyles.headerName,
             }}
           >
             {firstName} {lastName}
           </p>
           <p
-            className="font-medium"
             style={{
               color: colorHex,
+              ...fontStyles.headerJob,
             }}
           >
             {jobTitle}
           </p>
         </div>
-        <p className="text-xs text-gray-500">
+        <p className="text-gray-500" style={fontStyles.contact}>
           {city}
           {city && country ? ", " : ""}
           {country}
@@ -126,7 +150,8 @@ function PersonalInfoHeader({ resumeData }: ResumeSectionProps) {
 }
 
 function SummarySection({ resumeData }: ResumeSectionProps) {
-  const { summary, colorHex } = resumeData;
+  const { summary, colorHex, fontSize } = resumeData;
+  const fontStyles = getFontSizeStyles(fontSize);
 
   if (!summary) return null;
 
@@ -140,21 +165,23 @@ function SummarySection({ resumeData }: ResumeSectionProps) {
       />
       <div className="break-inside-avoid space-y-3">
         <p
-          className="text-lg font-semibold"
+          className="font-semibold"
           style={{
             color: colorHex,
+            ...fontStyles.sectionTitle,
           }}
         >
           Professional profile
         </p>
-        <div className="whitespace-pre-line text-sm">{summary}</div>
+        <div className="whitespace-pre-line" style={fontStyles.summary}>{summary}</div>
       </div>
     </>
   );
 }
 
 function WorkExperienceSection({ resumeData }: ResumeSectionProps) {
-  const { workExperiences, colorHex } = resumeData;
+  const { workExperiences, colorHex, fontSize } = resumeData;
+  const fontStyles = getFontSizeStyles(fontSize);
 
   const workExperiencesNotEmpty = workExperiences?.filter(
     (exp) => Object.values(exp).filter(Boolean).length > 0,
@@ -172,9 +199,10 @@ function WorkExperienceSection({ resumeData }: ResumeSectionProps) {
       />
       <div className="space-y-3">
         <p
-          className="text-lg font-semibold"
+          className="font-semibold"
           style={{
             color: colorHex,
+            ...fontStyles.sectionTitle,
           }}
         >
           Work experience
@@ -182,21 +210,22 @@ function WorkExperienceSection({ resumeData }: ResumeSectionProps) {
         {workExperiencesNotEmpty.map((exp, index) => (
           <div key={index} className="break-inside-avoid space-y-1">
             <div
-              className="flex items-center justify-between text-sm font-semibold"
+              className="flex items-center justify-between font-semibold"
               style={{
                 color: colorHex,
+                ...fontStyles.workPosition,
               }}
             >
               <span>{exp.position}</span>
               {exp.startDate && (
-                <span>
+                <span style={fontStyles.workDate}>
                   {formatDate(exp.startDate, "MM/yyyy")} -{" "}
                   {exp.endDate ? formatDate(exp.endDate, "MM/yyyy") : "Present"}
                 </span>
               )}
             </div>
-            <p className="text-xs font-semibold">{exp.company}</p>
-            <div className="whitespace-pre-line text-xs">{exp.description}</div>
+            <p className="font-semibold" style={fontStyles.workCompany}>{exp.company}</p>
+            <div className="whitespace-pre-line" style={fontStyles.workDescription}>{exp.description}</div>
           </div>
         ))}
       </div>
@@ -205,7 +234,8 @@ function WorkExperienceSection({ resumeData }: ResumeSectionProps) {
 }
 
 function EducationSection({ resumeData }: ResumeSectionProps) {
-  const { educations, colorHex } = resumeData;
+  const { educations, colorHex, fontSize } = resumeData;
+  const fontStyles = getFontSizeStyles(fontSize);
 
   const educationsNotEmpty = educations?.filter(
     (edu) => Object.values(edu).filter(Boolean).length > 0,
@@ -223,9 +253,10 @@ function EducationSection({ resumeData }: ResumeSectionProps) {
       />
       <div className="space-y-3">
         <p
-          className="text-lg font-semibold"
+          className="font-semibold"
           style={{
             color: colorHex,
+            ...fontStyles.sectionTitle,
           }}
         >
           Education
@@ -233,20 +264,21 @@ function EducationSection({ resumeData }: ResumeSectionProps) {
         {educationsNotEmpty.map((edu, index) => (
           <div key={index} className="break-inside-avoid space-y-1">
             <div
-              className="flex items-center justify-between text-sm font-semibold"
+              className="flex items-center justify-between font-semibold"
               style={{
                 color: colorHex,
+                ...fontStyles.educationDegree,
               }}
             >
               <span>{edu.degree}</span>
               {edu.startDate && (
-                <span>
+                <span style={fontStyles.educationDate}>
                   {edu.startDate &&
                     `${formatDate(edu.startDate, "MM/yyyy")} ${edu.endDate ? `- ${formatDate(edu.endDate, "MM/yyyy")}` : ""}`}
                 </span>
               )}
             </div>
-            <p className="text-xs font-semibold">{edu.school}</p>
+            <p className="font-semibold" style={fontStyles.educationSchool}>{edu.school}</p>
           </div>
         ))}
       </div>
@@ -255,7 +287,8 @@ function EducationSection({ resumeData }: ResumeSectionProps) {
 }
 
 function SkillsSection({ resumeData }: ResumeSectionProps) {
-  const { skills, colorHex, borderStyle } = resumeData;
+  const { skills, colorHex, borderStyle, fontSize } = resumeData;
+  const fontStyles = getFontSizeStyles(fontSize);
 
   if (!skills?.length) return null;
 
@@ -269,9 +302,10 @@ function SkillsSection({ resumeData }: ResumeSectionProps) {
       />
       <div className="break-inside-avoid space-y-3">
         <p
-          className="text-lg font-semibold"
+          className="font-semibold"
           style={{
             color: colorHex,
+            ...fontStyles.sectionTitle,
           }}
         >
           Skills
@@ -289,6 +323,7 @@ function SkillsSection({ resumeData }: ResumeSectionProps) {
                     : borderStyle === BorderStyles.CIRCLE
                       ? "9999px"
                       : "8px",
+                ...fontStyles.skills,
               }}
             >
               {skill}

@@ -11,6 +11,7 @@ import Footer from "./Footer";
 import ResumePreviewSection from "./ResumePreviewSection";
 import { steps } from "./steps";
 import useAutoSaveResume from "./useAutoSaveResume";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 interface ResumeEditorProps {
   resumeToEdit: ResumeServerData | null;
@@ -18,6 +19,7 @@ interface ResumeEditorProps {
 
 export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
 
   const [resumeData, setResumeData] = useState<ResumeValues>(
     resumeToEdit ? mapToResumeValues(resumeToEdit) : {},
@@ -44,10 +46,9 @@ export default function ResumeEditor({ resumeToEdit }: ResumeEditorProps) {
   return (
     <div className="flex grow flex-col">
       <header className="space-y-1.5 border-b px-3 py-5 text-center">
-        <h1 className="text-2xl font-bold">Design your resume</h1>
+        <h1 className="text-2xl font-bold">{t("editor.title")}</h1>
         <p className="text-sm text-muted-foreground">
-          Follow the steps below to create your resume. Your progress will be
-          saved automatically.
+          {t("editor.subtitle")}
         </p>
       </header>
       <main className="relative grow">

@@ -1,17 +1,22 @@
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { env } from "@/env";
+import prisma from "@/lib/prisma";
+import { auth } from "@clerk/nextjs/server";
+import SuccessContent from "./SuccessContent";
 
-export default function Page() {
+export default async function Page() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return null;
+  }
+
+  const subscription = await prisma.userSubscription.findUnique({
+    where: { userId },
+  });
+
+  const isOneTimePayment = subscription?.stripePriceId === env.NEXT_PUBLIC_STRIPE_PRICE_ID_ONE_TIME;
+
   return (
-    <main className="mx-auto max-w-7xl space-y-6 px-3 py-6 text-center">
-      <h1 className="text-3xl font-bold">Billing Success</h1>
-      <p>
-        The checkout was successful and your Pro account has been activated.
-        Enjoy!
-      </p>
-      <Button asChild>
-        <Link href="/resumes">Go to resumes</Link>
-      </Button>
-    </main>
+    <SuccessContent isOneTimePayment={isOneTimePayment} />
   );
 }

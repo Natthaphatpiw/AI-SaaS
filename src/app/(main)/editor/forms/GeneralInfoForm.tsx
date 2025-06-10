@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Form,
   FormControl,
@@ -13,11 +15,14 @@ import { generalInfoSchema, GeneralInfoValues } from "@/lib/validation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useLanguage } from "@/lib/i18n/LanguageProvider";
 
 export default function GeneralInfoForm({
   resumeData,
   setResumeData,
 }: EditorFormProps) {
+  const { t } = useLanguage();
+
   const form = useForm<GeneralInfoValues>({
     resolver: zodResolver(generalInfoSchema),
     defaultValues: {
@@ -38,9 +43,9 @@ export default function GeneralInfoForm({
   return (
     <div className="mx-auto max-w-xl space-y-6">
       <div className="space-y-1.5 text-center">
-        <h2 className="text-2xl font-semibold">General info</h2>
+        <h2 className="text-2xl font-semibold">{t("editor.forms.generalInfo.title")}</h2>
         <p className="text-sm text-muted-foreground">
-          This will not appear on your resume.
+          {t("editor.forms.generalInfo.subtitle")}
         </p>
       </div>
       <Form {...form}>
@@ -50,9 +55,9 @@ export default function GeneralInfoForm({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Project name</FormLabel>
+                <FormLabel>{t("editor.forms.generalInfo.projectName")}</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="My cool resume" autoFocus />
+                  <Input {...field} placeholder={t("editor.forms.generalInfo.projectNamePlaceholder") as string} autoFocus />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -63,12 +68,12 @@ export default function GeneralInfoForm({
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>{t("editor.forms.generalInfo.description")}</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="A resume for my next job" />
+                  <Input {...field} placeholder={t("editor.forms.generalInfo.descriptionPlaceholder") as string} />
                 </FormControl>
                 <FormDescription>
-                  Describe what this resume is for.
+                  {t("editor.forms.generalInfo.descriptionHelp")}
                 </FormDescription>
                 <FormMessage />
               </FormItem>

@@ -9,11 +9,12 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "w0mlmrgwbziwquaq.public.blob.vercel-storage.com"
-      }
-    ]
-  }
+        protocol: 'https',
+        hostname: 'uadzs1v5vqiz9o7f.public.blob.vercel-storage.com',
+      },
+    ],
+  },
+  allowedDevOrigins: ["172.20.10.3"]
 };
 
 export default nextConfig;
